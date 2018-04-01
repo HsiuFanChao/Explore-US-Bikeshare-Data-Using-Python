@@ -102,25 +102,25 @@ def time_stats(df):
     df['Start Time'] = pd.to_datetime(arg=df['Start Time'], errors='coerce', format='%Y-%m-%d %H:%M:%S')
 
     # 2. extract hour from the Start Time column to create an hour column
-    df['month'] = df['Start Time'].dt.month
+    month = df['Start Time'].dt.month
 
     # 2.1
-    df['weekday_name'] = df['Start Time'].dt.weekday_name
+    weekday_name = df['Start Time'].dt.weekday_name
 
     # 2.2
-    df['hour'] = df['Start Time'].dt.hour
+    hour = df['Start Time'].dt.hour
 
     # 3. Display the most common month
-    most_common_month = df['month'].mode()[0]
+    most_common_month = month.mode()[0]
     print('Most Common Month: ', most_common_month)
     #print('Alternatives', df['month'].value_counts().idxmax())
 
     # 3.1 Display the most common day of week
-    most_common_day_of_week = df['weekday_name'].mode()[0]
+    most_common_day_of_week = weekday_name.mode()[0]
     print('Most Common day of week: ', most_common_day_of_week)
 
     # 3.2 Display the most common start hour
-    popular_hour = df['hour'].mode()[0]
+    popular_hour = hour.mode()[0]
     print('Most Frequent Start Hour: ', popular_hour)
 
     print("\nThis took %s seconds." % (time.time() - start_time))
@@ -140,9 +140,10 @@ def station_stats(df):
     print ('Most commonly used end station:', df['End Station'].value_counts().idxmax())
 
     # display most frequent combination of start station and end station trip
-    df['Combine Station'] = df['Start Station'] + "*" + df['End Station']
-    most_freq_combination = df['Combine Station'].value_counts().idxmax()
+    combine_stations = df['Start Station'] + "*" + df['End Station']
+    most_freq_combination = combine_stations.value_counts().idxmax()
     print ('Most frequent combination stations, start from\n{} \nto\n{}'.format(most_freq_combination.split('*')[0], most_freq_combination.split('*')[1]))
+
     print("\nThis took %s seconds." % (time.time() - start_time))
     print('-'*40)
 
@@ -201,6 +202,18 @@ def user_stats(df):
     print("\nThis took %s seconds." % (time.time() - start_time))
     print('-'*40)
 
+def show_raw_data(df):
+    user_input = input('Do you want to see raw data? Enter yes or no.\n')
+    line_number = 0
+
+    while True:
+        if user_input.lower() != 'no':
+            # Show specfic rows
+            print(df.iloc[line_number : line_number+5])
+            line_number +=5
+            user_input = input('\nDo you want to see more raw data? Enter yes or no.\n')
+        else:
+            break
 
 def main():
     while True:
@@ -211,7 +224,7 @@ def main():
         station_stats(df)
         trip_duration_stats(df)
         user_stats(df)
-
+        show_raw_data(df)
         restart = input('\nWould you like to restart? Enter yes or no.\n')
         if restart.lower() != 'yes':
             break
